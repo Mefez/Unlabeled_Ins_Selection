@@ -9,7 +9,7 @@ import math
 import json
 
 epsilon=0.001
-minimum_samples=5
+minimum_samples=3
 
 #0.0001,2 04:13:43 clustering time
 
@@ -72,10 +72,39 @@ if __name__ == '__main__':
   mylist = []
   results = []
   
+  with open("/scratch/zorlumeh/ember/train_features_0.jsonl", "r") as json_file:
+    data = [json.loads(line) for line in json_file]
+  json_file.close
+  for json_str in data:
+    mylist.append(PE(json_str['histogram'], json_str['sha256'], -1, -1, -1))
+  
   with open("/scratch/zorlumeh/ember/train_features_1.jsonl", "r") as json_file:
     data = [json.loads(line) for line in json_file]
   json_file.close
+  for json_str in data:
+    mylist.append(PE(json_str['histogram'], json_str['sha256'], -1, -1, -1))
 
+  with open("/scratch/zorlumeh/ember/train_features_2.jsonl", "r") as json_file:
+    data = [json.loads(line) for line in json_file]
+  json_file.close
+  for json_str in data:
+    mylist.append(PE(json_str['histogram'], json_str['sha256'], -1, -1, -1))
+
+  with open("/scratch/zorlumeh/ember/train_features_3.jsonl", "r") as json_file:
+    data = [json.loads(line) for line in json_file]
+  json_file.close
+  for json_str in data:
+    mylist.append(PE(json_str['histogram'], json_str['sha256'], -1, -1, -1))
+
+  with open("/scratch/zorlumeh/ember/train_features_4.jsonl", "r") as json_file:
+    data = [json.loads(line) for line in json_file]
+  json_file.close
+  for json_str in data:
+    mylist.append(PE(json_str['histogram'], json_str['sha256'], -1, -1, -1))
+
+  with open("/scratch/zorlumeh/ember/train_features_5.jsonl", "r") as json_file:
+    data = [json.loads(line) for line in json_file]
+  json_file.close
   for json_str in data:
     mylist.append(PE(json_str['histogram'], json_str['sha256'], -1, -1, -1))
 
