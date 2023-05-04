@@ -8,14 +8,14 @@ import time
 import math
 import json
 
-epsilon=0.001
-minimum_samples=5
+epsilon=0.0001
+minimum_samples=2
 
-#0.0001,2 04:13:43 clustering time
+start_time = time.time()
 
 class PE:
   def __init__(self, positions, sha, label, ne, NP):
-    self.psitions = positions #np.mod(positions[:2],[200,200]) #n-ary position
+    self.psitions = positions 
     self.label = label
     self.sha = sha
     self.NE = ne
@@ -72,7 +72,7 @@ if __name__ == '__main__':
   mylist = []
   results = []
   
-  with open("/scratch/zorlumeh/ember/train_features_1.jsonl", "r") as json_file:
+  with open("/home/zorlumeh/ember/train_features_1.jsonl", "r") as json_file:
     data = [json.loads(line) for line in json_file]
   json_file.close
 
@@ -88,24 +88,14 @@ if __name__ == '__main__':
   for i in mistah_listah:
     plotdata.append(i.psitions)
 
-  #for i in range(0, 2):
-  #  print (plotdata[i])
   
-  numOfFeatures = 50 #[set here number of features, e.g. 50]
+  numOfFeatures = 50
   pca = PCA(n_components=numOfFeatures)
-  model = pca.fit(plotdata) #X is your dataset (it is better to normalized it before PCA)
+  model = pca.fit(plotdata)
   X_pca = np.array(model.transform(plotdata)).tolist()
   sc = StandardScaler()
   plotdata = np.array(sc.fit_transform(X_pca)).tolist()
   
-
-  #for i in range(0, 2):
-  #  print (X_pca[i])
-
-  #for i in range(0, 2):
-  #  print (plotdata[i])
-
-  #plotdata = np.array(plotdata).reshape(len(mistah_listah),2)
 
   clustering = DBSCAN(eps=epsilon, min_samples=minimum_samples).fit(plotdata)
 
@@ -114,7 +104,7 @@ if __name__ == '__main__':
 
   with open("clustering_result.jsonl", "a") as f:
     for i, j in zip(mistah_listah, plotdata):
-      i.psitions = j #np.mod(j['histogram'][:2],[200,200]).tolist()
+      i.psitions = j
       f.write(str(i) + "\n")
   f.close()
 
@@ -133,7 +123,7 @@ if __name__ == '__main__':
   
   mistah_listah = np.array(result)
 
-  pool = mp.Pool(mp.cpu_count())
+  pool = mp.Pool(10)
 
   for i in range(0, len(mistah_listah)):
     pool.apply_async(NE, args=(mistah_listah[i], mistah_listah), callback=get_result)
@@ -170,10 +160,21 @@ if __name__ == '__main__':
   pool.close()
   pool.join()
 
-  """finalist = np.zeros(len(mistah_listah))
+  with open("NE_result.jsonl", "r") as json_file:
+    data = [json.loads(line) for line in json_file]
+  json_file.close
 
-  #print (len(mistah_listah))
+  for json_str in data:
+    result.append(PE(json_str['histogram'], json_str['sha256'], json_str['label'], json_str['NE'], json_str['NP']))
   
+  mistah_listah = np.array(result)
+
+  finalist = np.zeros(len(mistah_listah))
+
+  with open("time.jsonl", "a") as f:
+    f.write("--- %s seconds ---" % (time.time() - start_time))
+  f.close()
+
   for i in mistah_listah:
     finalist[i.NP] = 1
   
@@ -181,8 +182,12 @@ if __name__ == '__main__':
     if finalist[i] == 0:
       mistah_listah[i].label = -1
 
-  with open("final_result.jsonl", "a") as f:
+  with open("final_result_0_.jsonl", "a") as f:
     for i in mistah_listah:
       if i.label != -1:
         f.write(str(i) + "\n")
-  f.close()"""
+  f.close()
+
+  with open("time.jsonl", "a") as f:
+    f.write("--- %s seconds ---" % (time.time() - start_time))
+  f.close()

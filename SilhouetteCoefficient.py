@@ -5,7 +5,7 @@ import json
 
 class PE:
   def __init__(self, positions, sha, label, ne, NP):
-    self.psitions = positions #np.mod(positions[:2],[200,200]) #n-ary position
+    self.psitions = positions
     self.label = label
     self.sha = sha
     self.NE = ne
@@ -17,7 +17,7 @@ class PE:
 
 result = []
 
-with open("final_result_0.001,3.jsonl", "r") as json_file:
+with open("final_result.jsonl", "r") as json_file:
     data = [json.loads(line) for line in json_file]
 json_file.close
 
@@ -32,12 +32,6 @@ labels = []
 for i in range(0, len(mistah_listah)):
    labels.append(mistah_listah[i].label)
    plotdata.append(mistah_listah[i].psitions)
-  
-"""for i in mistah_listah:
-    plotdata.append(i.psitions)
-
-clustering = DBSCAN(eps=0.001, min_samples=5).fit(plotdata)
-labels = clustering.labels_"""
 
 print(plotdata[0])
 
